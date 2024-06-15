@@ -4,6 +4,7 @@ import tasks from './data/tasks';
 import Column from './components/Column';
 import { Layout, Button } from 'antd';
 import TaskForm from './components/TaskForm';
+import { TaskType } from './types';
 
 const statuses = ['To Do', 'In Progress', 'Done'];
 
@@ -11,7 +12,7 @@ const { Header, Content, Footer } = Layout;
 
 const App: React.FC = () => {
   const [taskData, setTaskData] = useState(tasks);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDragStart = (event: DragStartEvent) => {
     console.log('drag start', event);
@@ -20,8 +21,6 @@ const App: React.FC = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
-
-    console.log('over', over);
 
     setTaskData((prevTasks) => {
       const updatedTasks = prevTasks.map((task) => {
@@ -34,9 +33,9 @@ const App: React.FC = () => {
     });
   };
 
-  const handleCreateTask = (task: any) => {
+  const handleCreateTask = (task: TaskType) => {
     setTaskData((prevTasks) => [...prevTasks, task]);
-    setIsModalVisible(false);
+    setIsModalOpen(false);
   };
 
   const columns = statuses.map((status) => ({
@@ -63,15 +62,14 @@ const App: React.FC = () => {
         </Content>
       </DndContext>
       <Footer>
-        <Button type="primary" onClick={() => setIsModalVisible(true)}>
+        <Button type="primary" onClick={() => setIsModalOpen(true)}>
           Create Task
         </Button>
       </Footer>
       <TaskForm
-        visible={isModalVisible}
+        open={isModalOpen}
         onCreate={handleCreateTask}
-        onCancel={() => setIsModalVisible(false)}
-        statuses={statuses}
+        onCancel={() => setIsModalOpen(false)}
       />
     </Layout>
   );

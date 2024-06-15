@@ -1,27 +1,24 @@
 import React from 'react';
 import { Modal, Form, Input, Select } from 'antd';
 import { uniqueId } from 'lodash';
+import { TaskType } from '../types';
+
+const statuses = ['To Do', 'In Progress', 'Done'];
 
 const { Option } = Select;
 
 interface TaskFormProps {
-  visible: boolean;
-  onCreate: (task: any) => void;
+  open: boolean;
+  onCreate: (task: TaskType) => void;
   onCancel: () => void;
-  statuses: string[];
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({
-  visible,
-  onCreate,
-  onCancel,
-  statuses,
-}) => {
+const TaskForm: React.FC<TaskFormProps> = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm();
 
   return (
     <Modal
-      visible={visible}
+      open={open}
       title="Create a new task"
       okText="Create"
       cancelText="Cancel"

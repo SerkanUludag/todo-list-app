@@ -10,12 +10,18 @@ interface TaskProps {
 }
 
 const Task: React.FC<TaskProps> = ({ id, title, description, assignee }) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id,
+    });
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        transition: 'transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        opacity: transform ? 0.8 : 1,
+        cursor: 'grabbing',
+        zIndex: isDragging ? 1000 : undefined,
       }
     : undefined;
 
