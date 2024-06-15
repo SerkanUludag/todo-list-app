@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import tasks from './data/tasks';
 import Column from './components/Column';
 import { Layout, Button } from 'antd';
 import TaskForm from './components/TaskForm';
+
+const statuses = ['To Do', 'In Progress', 'Done'];
 
 const { Header, Content, Footer } = Layout;
 
@@ -11,9 +13,15 @@ const App: React.FC = () => {
   const [taskData, setTaskData] = useState(tasks);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const handleDragStart = (event: DragStartEvent) => {
+    console.log('drag start', event);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
+
+    console.log('over', over);
 
     setTaskData((prevTasks) => {
       const updatedTasks = prevTasks.map((task) => {
@@ -22,7 +30,6 @@ const App: React.FC = () => {
         }
         return task;
       });
-      console.log(updatedTasks);
       return updatedTasks;
     });
   };
@@ -32,10 +39,8 @@ const App: React.FC = () => {
     setIsModalVisible(false);
   };
 
-  // Dynamically infer the statuses
-  const statuses = Array.from(new Set(taskData.map((task) => task.status)));
-
   const columns = statuses.map((status) => ({
+    id: status,
     title: status,
     tasks: taskData.filter((task) => task.status === status),
   }));
@@ -45,10 +50,15 @@ const App: React.FC = () => {
       <Header>
         <h1 style={{ color: 'white' }}>Todo List</h1>
       </Header>
-      <DndContext onDragEnd={handleDragEnd}>
+      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <Content style={{ display: 'flex', padding: '24px' }}>
           {columns.map((column, index) => (
-            <Column key={index} title={column.title} tasks={column.tasks} />
+            <Column
+              key={index}
+              id={column.id}
+              title={column.title}
+              tasks={column.tasks}
+            />
           ))}
         </Content>
       </DndContext>
